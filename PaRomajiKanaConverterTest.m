@@ -45,6 +45,7 @@
            @"Dan Kogai",
           @"jakkusuka-do",
           @"zyakkusuka-do",
+          @"byouin",
           @"conntennporari-"];
     NSArray *testHiraganaList =
         @[@"ぎょぎょっ",
@@ -63,6 +64,7 @@
           @"きゃりーぱみゅぱみゅ",
           @"はんにゃしんきょう",
           @"てすと1234567890",
+          @"びょういん",
           @"こんてんぽらりー"];
     NSArray *testKatakanaList =
         @[@"インターネット",
