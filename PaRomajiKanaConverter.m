@@ -165,7 +165,7 @@
     {
         NSError *error = nil;
         NSArray *hiraList = [_hiraToKataMap allKeys];
-        NSString *hiraPattern = [NSString stringWithFormat:@"(%@)", [hiraList componentsJoinedByString:@"|"]];
+        NSString *hiraPattern = [NSString stringWithFormat:@"(%@|.)", [hiraList componentsJoinedByString:@"|"]];
         _reHira = [NSRegularExpression regularExpressionWithPattern:hiraPattern options:0 error:&error];
         if (error) {
             NSLog(@"hira regex error:%@", error);
@@ -174,7 +174,7 @@
     {
         NSError *error = nil;
         NSArray *kataList = [_kataToHiraMap allKeys];
-        NSString *kataPattern = [NSString stringWithFormat:@"(%@)", [kataList componentsJoinedByString:@"|"]];
+        NSString *kataPattern = [NSString stringWithFormat:@"(%@|.)", [kataList componentsJoinedByString:@"|"]];
         _reKata = [NSRegularExpression regularExpressionWithPattern:kataPattern options:0 error:&error];
         if (error) {
             NSLog(@"kata regex error:%@", error);
@@ -184,7 +184,7 @@
         NSError *error = nil;
         NSMutableArray *romajiKeys = [NSMutableArray arrayWithArray:[_romajiToKanaMap allKeys]];
         [self sortStringArrayByLength:romajiKeys ascending:NO];
-        NSString *romajiPattern = [NSString stringWithFormat:@"(%@)", [romajiKeys componentsJoinedByString:@"|"]];
+        NSString *romajiPattern = [NSString stringWithFormat:@"(%@|.)", [romajiKeys componentsJoinedByString:@"|"]];
         _reRomajiToKana = [NSRegularExpression regularExpressionWithPattern:romajiPattern options:0 error:&error];
         if (error) {
             NSLog(@"romajiToKana regex error:%@", error);
@@ -199,14 +199,14 @@
     }
     { //子音が続く時は "ッ" と変換
         NSError *error = nil;
-        _reRomajiXtu = [NSRegularExpression regularExpressionWithPattern:@"([bcdfghjklmpqrstvwxyz])\1" options:0 error:&error];
+        _reRomajiXtu = [NSRegularExpression regularExpressionWithPattern:@"([bcdfghjklmpqrstvwxyz])\\1" options:0 error:&error];
         if (error) {
             NSLog(@"romajiXtu regex error:%@", error);
         }
     }
     { //母音が続く時は "ー" と変換
         NSError *error = nil;
-        _reRomajiA__ = [NSRegularExpression regularExpressionWithPattern:@"([aiueo])\1" options:0 error:&error];
+        _reRomajiA__ = [NSRegularExpression regularExpressionWithPattern:@"([aiueo])\\1" options:0 error:&error];
         if (error) {
             NSLog(@"romajiA__ regex error:%@", error);
         }
@@ -215,7 +215,7 @@
         NSError *error = nil;
         NSMutableArray *kanaKeys = [NSMutableArray arrayWithArray:[_kanaToRomajiMap allKeys]];
         [self sortStringArrayByLength:kanaKeys ascending:NO];
-        NSString *romajiPattern = [NSString stringWithFormat:@"(%@)", [kanaKeys componentsJoinedByString:@"|"]];
+        NSString *romajiPattern = [NSString stringWithFormat:@"(%@|.)", [kanaKeys componentsJoinedByString:@"|"]];
         _reKanaToRomaji = [NSRegularExpression regularExpressionWithPattern:romajiPattern options:0 error:&error];
         if (error) {
             NSLog(@"kanaToRomaji regex error:%@", error);
@@ -251,7 +251,7 @@
     }
     { //oosaka → osaka
         NSError *error = nil;
-        _reKanaOo = [NSRegularExpression regularExpressionWithPattern:@"([aiueo])\1" options:0 error:&error];
+        _reKanaOo = [NSRegularExpression regularExpressionWithPattern:@"([aiueo])\\1" options:0 error:&error];
         if (error) {
             NSLog(@"kanaOo regex error:%@", error);
         }
@@ -261,44 +261,21 @@
 
 - (NSString* )convertToHiraganaFromKatakana:(NSString *)katakana
 {
-    NSMutableString *hiragana = [NSMutableString string];
-    [_reKata enumerateMatchesInString:katakana
-                              options:0
-                                range:NSMakeRange(0, katakana.length)
-                           usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
-                               NSString *matchedStr = [katakana substringWithRange:result.range];
-                               [hiragana appendString:[_kataToHiraMap objectForKey:matchedStr]];
-                           }];
-    return hiragana;
+    return [self replaceString:katakana withRegex:_reKata replaceMap:_kataToHiraMap];
 }
 
 - (NSString* )convertToKatakanaFromHiragana:(NSString *)hiragana
 {
-    NSMutableString *katakana = [NSMutableString string];
-    [_reHira enumerateMatchesInString:hiragana
-                              options:0
-                                range:NSMakeRange(0, katakana.length)
-                           usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
-                               NSString *matchedStr = [hiragana substringWithRange:result.range];
-                               [katakana appendString:[_hiraToKataMap objectForKey:matchedStr]];
-                           }];
-    return katakana;
+    return [self replaceString:hiragana withRegex:_reHira replaceMap:_hiraToKataMap];
 }
 
 - (NSString* )convertToKatakanaFromRomaji:(NSString *)romaji
 {
     NSMutableString *convertedStr = [NSMutableString stringWithString:romaji];
-    [_reRomajiMba replaceMatchesInString:convertedStr options:0 range:NSMakeRange(0, romaji.length) withTemplate:@"ン$1$2"];
-    [_reRomajiXtu replaceMatchesInString:convertedStr options:0 range:NSMakeRange(0, romaji.length) withTemplate:@"ッ$1"];
-    [_reRomajiXtu replaceMatchesInString:convertedStr options:0 range:NSMakeRange(0, romaji.length) withTemplate:@"$1ー"];
-    NSMutableString *katakana = [NSMutableString string];
-    [_reRomajiToKana enumerateMatchesInString:convertedStr
-                              options:0
-                                range:NSMakeRange(0, convertedStr.length)
-                           usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
-                               NSString *matchedStr = [convertedStr substringWithRange:result.range];
-                               [katakana appendString:[_romajiToKanaMap objectForKey:matchedStr]];
-                           }];
+    [_reRomajiMba replaceMatchesInString:convertedStr options:0 range:NSMakeRange(0, convertedStr.length) withTemplate:@"ン$1$2"];
+    [_reRomajiXtu replaceMatchesInString:convertedStr options:0 range:NSMakeRange(0, convertedStr.length) withTemplate:@"ッ$1"];
+    [_reRomajiXtu replaceMatchesInString:convertedStr options:0 range:NSMakeRange(0, convertedStr.length) withTemplate:@"$1ー"];
+    NSMutableString *katakana = [self replaceString:convertedStr withRegex:_reRomajiToKana replaceMap:_romajiToKanaMap];
     return katakana;
 }
 
@@ -311,20 +288,32 @@
 - (NSString* )convertToRomajiFromKana:(NSString *)kana
 {
     NSString *katakana = [self convertToKatakanaFromHiragana:kana];
-    NSMutableString *romaji = [NSMutableString string];
-    [_reKanaToRomaji enumerateMatchesInString:katakana
-                                      options:0
-                                        range:NSMakeRange(0, katakana.length)
-                                   usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
-                                       NSString *matchedStr = [katakana substringWithRange:result.range];
-                                       [romaji appendString:[_kanaToRomajiMap objectForKey:matchedStr]];
-                                   }];
-    [_reKanaXtu replaceMatchesInString:romaji options:0 range:NSMakeRange(0, katakana.length) withTemplate:@"$1$1"];
-    [_reKanaLtu replaceMatchesInString:romaji options:0 range:NSMakeRange(0, katakana.length) withTemplate:@""];
-    [_reKanaEr  replaceMatchesInString:romaji options:0 range:NSMakeRange(0, katakana.length) withTemplate:@"$1$1"];
-    [_reKanaN   replaceMatchesInString:romaji options:0 range:NSMakeRange(0, katakana.length) withTemplate:@"m$1$2"];
-    [_reKanaOo  replaceMatchesInString:romaji options:0 range:NSMakeRange(0, katakana.length) withTemplate:@"$1"];
+    NSMutableString *romaji = [self replaceString:katakana withRegex:_reKanaToRomaji replaceMap:_kanaToRomajiMap];
+    [_reKanaXtu replaceMatchesInString:romaji options:0 range:NSMakeRange(0, romaji.length) withTemplate:@"$1$1"];
+    [_reKanaLtu replaceMatchesInString:romaji options:0 range:NSMakeRange(0, romaji.length) withTemplate:@""];
+    [_reKanaEr  replaceMatchesInString:romaji options:0 range:NSMakeRange(0, romaji.length) withTemplate:@"$1$1"];
+    [_reKanaN   replaceMatchesInString:romaji options:0 range:NSMakeRange(0, romaji.length) withTemplate:@"m$1$2"];
+    [_reKanaOo  replaceMatchesInString:romaji options:0 range:NSMakeRange(0, romaji.length) withTemplate:@"$1"];
     return romaji;
+}
+
+- (NSMutableString *)replaceString:(NSString *)str withRegex:(NSRegularExpression *)regex replaceMap:(NSDictionary *)replaceMap
+{
+    NSMutableString *ret = [NSMutableString string];
+    [regex enumerateMatchesInString:str
+                                options:0
+                              range:NSMakeRange(0, str.length)
+                                   usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
+                                       NSString *matchedStr = [str substringWithRange:result.range];
+                                       NSString *replacedStr = [replaceMap objectForKey:matchedStr];
+                                       if (replacedStr) {
+                                           [ret appendString:replacedStr];
+                                       }
+                                       else {
+                                           [ret appendString:matchedStr];
+                                       }
+                                   }];
+    return ret;
 }
 
 - (void)sortStringArrayByLength:(NSMutableArray *)array ascending:(BOOL)ascending
