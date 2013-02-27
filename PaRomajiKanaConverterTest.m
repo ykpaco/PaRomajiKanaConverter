@@ -43,6 +43,8 @@
           @"hannyasinkyou",
           @"hannyashinnkyou",
            @"Dan Kogai",
+          @"jakkusuka-do",
+          @"zyakkusuka-do",
           @"conntennporari-"];
     NSArray *testHiraganaList =
         @[@"ぎょぎょっ",
