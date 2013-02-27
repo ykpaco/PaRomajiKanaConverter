@@ -3,8 +3,8 @@ PaRomajiKanaConverter
 
 Kana - Romaji Converter written in Objective-C
 
-iOS's Romaji - Kana translation is buggy on some ios versions and is not prescise. 
-The goal of this code is to become a good alternative of the iOS string translation library.
+iOS's Romaji - Kana transform (CFStringTransform) is buggy on some ios versions and is not prescise. 
+The goal of this code is to become a good alternative of the iOS string transform library.
 
 
 ## Install
