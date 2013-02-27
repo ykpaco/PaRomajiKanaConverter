@@ -118,7 +118,9 @@
         @"mwa":@"ムヮ", @"mwi":@"ムィ", @"mwu":@"ムゥ", @"mwe":@"ムェ", @"mwo":@"ムォ",
         @"bwa":@"ビヮ", @"bwi":@"ビィ", @"bwu":@"ビゥ", @"bwe":@"ビェ", @"bwo":@"ビォ",
         @"pwa":@"プヮ", @"pwi":@"プィ", @"pwu":@"プゥ", @"pwe":@"プェ", @"pwo":@"プォ",
-        @"phi":@"プィ", @"phu":@"プゥ", @"phe":@"プェ", @"pho":@"フォ"
+        @"phi":@"プィ", @"phu":@"プゥ", @"phe":@"プェ", @"pho":@"フォ",
+        
+        @"-":@"ー"
     };
 
 
@@ -140,7 +142,8 @@
 
         @"b":@"ブ", @"c":@"ク", @"d":@"ド", @"f":@"フ"  , @"g":@"グ", @"h":@"フ", @"j":@"ジ",
         @"k":@"ク", @"l":@"ル", @"m":@"ム", @"p":@"プ"  , @"q":@"ク", @"r":@"ル", @"s":@"ス",
-        @"t":@"ト", @"v":@"ヴ", @"w":@"ゥ", @"x":@"クス", @"y":@"ィ", @"z":@"ズ"
+        @"t":@"ト", @"v":@"ヴ", @"w":@"ゥ", @"x":@"クス", @"y":@"ィ", @"z":@"ズ",
+        @"nn":@"ン"
     };
 
     NSDictionary *kanaAssist = @{ @"a":@"ァ", @"i":@"ィ", @"u":@"ゥ", @"e":@"ェ", @"o":@"ォ" };
@@ -271,12 +274,12 @@
 
 - (NSString* )convertToKatakanaFromRomaji:(NSString *)romaji
 {
+    romaji = [romaji lowercaseString];
     NSMutableString *convertedStr = [NSMutableString stringWithString:romaji];
-    [_reRomajiMba replaceMatchesInString:convertedStr options:0 range:NSMakeRange(0, convertedStr.length) withTemplate:@"ン$1$2"];
-    [_reRomajiXtu replaceMatchesInString:convertedStr options:0 range:NSMakeRange(0, convertedStr.length) withTemplate:@"ッ$1"];
-    [_reRomajiXtu replaceMatchesInString:convertedStr options:0 range:NSMakeRange(0, convertedStr.length) withTemplate:@"$1ー"];
-    NSMutableString *katakana = [self replaceString:convertedStr withRegex:_reRomajiToKana replaceMap:_romajiToKanaMap];
-    return katakana;
+    [self replaceString:convertedStr withRegex:_reRomajiMba template:@"ン$1$2"]; //m の後ろにバ行、パ行のときは "ン" と変換
+    [self replaceString:convertedStr withRegex:_reRomajiXtu template:@"ッ$1"];   //子音が続く時は "ッ" と変換
+    [self replaceString:convertedStr withRegex:_reRomajiA__ template:@"$1ー"];   //母音が続く時は "ー" と変換
+    return [self replaceString:convertedStr withRegex:_reRomajiToKana replaceMap:_romajiToKanaMap];
 }
 
 - (NSString* )convertToHiraganaFromRomaji:(NSString *)romaji
@@ -289,12 +292,17 @@
 {
     NSString *katakana = [self convertToKatakanaFromHiragana:kana];
     NSMutableString *romaji = [self replaceString:katakana withRegex:_reKanaToRomaji replaceMap:_kanaToRomajiMap];
-    [_reKanaXtu replaceMatchesInString:romaji options:0 range:NSMakeRange(0, romaji.length) withTemplate:@"$1$1"];
-    [_reKanaLtu replaceMatchesInString:romaji options:0 range:NSMakeRange(0, romaji.length) withTemplate:@""];
-    [_reKanaEr  replaceMatchesInString:romaji options:0 range:NSMakeRange(0, romaji.length) withTemplate:@"$1$1"];
-    [_reKanaN   replaceMatchesInString:romaji options:0 range:NSMakeRange(0, romaji.length) withTemplate:@"m$1$2"];
-    [_reKanaOo  replaceMatchesInString:romaji options:0 range:NSMakeRange(0, romaji.length) withTemplate:@"$1"];
+    [self replaceString:romaji withRegex:_reKanaXtu template:@"$1$1"]; //小さい "ッ" は直後の文字を２回に変換
+    [self replaceString:romaji withRegex:_reKanaLtu template:@""];     //最後の小さい "ッ" は消去 //"ー"は直前の文字を２回に変換
+    [self replaceString:romaji withRegex:_reKanaEr template:@"$1$1"];  //"ー"は直前の文字を２回に変換
+    [self replaceString:romaji withRegex:_reKanaN template:@"m$1$2"];  //n の後ろが バ行、パ行 なら m に修正
+    [self replaceString:romaji withRegex:_reKanaOo template:@"$1"];    //oosaka → osaka
     return romaji;
+}
+
+- (void)replaceString:(NSMutableString *)str withRegex:(NSRegularExpression *)regex template:(NSString *)template
+{
+    [regex replaceMatchesInString:str options:0 range:NSMakeRange(0, str.length) withTemplate:template];
 }
 
 - (NSMutableString *)replaceString:(NSString *)str withRegex:(NSRegularExpression *)regex replaceMap:(NSDictionary *)replaceMap
