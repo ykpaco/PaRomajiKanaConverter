@@ -197,7 +197,7 @@
     }
     { //nnの後に母音またはyが続かない場合は 1 個の n に変換
         NSError *error = nil;
-        _reRomajiNn = [NSRegularExpression regularExpressionWithPattern:@"nn([^aiueoy])" options:0 error:&error];
+        _reRomajiNn = [NSRegularExpression regularExpressionWithPattern:@"nn([^aiueoy]|$)" options:0 error:&error];
         if (error) {
             NSLog(@"romajiMba regex error:%@", error);
         }
@@ -288,7 +288,7 @@
     [self replaceString:convertedStr withRegex:_reRomajiNn template:@"n$1"];     //nnの後に母音またはyが続かない場合は 1 個の n に変換
     [self replaceString:convertedStr withRegex:_reRomajiMba template:@"ン$1$2"]; //m の後ろにバ行、パ行のときは "ン" と変換
     [self replaceString:convertedStr withRegex:_reRomajiXtu template:@"ッ$1"];   //子音が続く時は "ッ" と変換
-    [self replaceString:convertedStr withRegex:_reRomajiA__ template:@"$1ー"];   //母音が続く時は "ー" と変換
+    //[self replaceString:convertedStr withRegex:_reRomajiA__ template:@"$1ー"];   //母音が続く時は "ー" と変換
     return [self replaceString:convertedStr withRegex:_reRomajiToKana replaceMap:_romajiToKanaMap];
 }
 

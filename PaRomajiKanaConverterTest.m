@@ -51,6 +51,8 @@
           @"thu-su",
           @"theiyaaltu",
           @"tho-su",
+          @"yu-kyan",
+          @"yu-kyann",
           @"conntennporari-"];
     NSArray *testHiraganaList =
         @[@"ぎょぎょっ",
@@ -75,6 +77,7 @@
           @"てゅーす",
           @"てぇいやあっ",
           @"てょーす",
+          @"ゆーきゃん",
           @"こんてんぽらりー"];
     NSArray *testKatakanaList =
         @[@"インターネット",
