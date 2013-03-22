@@ -84,7 +84,7 @@
         @"ma" :@"マ", @"mi" :@"ミ", @"mu" :@"ム", @"me" :@"メ", @"mo" :@"モ",
         @"ya" :@"ヤ", @"yu" :@"ユ", @"yo" :@"ヨ",
         @"ra" :@"ラ", @"ri" :@"リ", @"ru" :@"ル", @"re" :@"レ", @"ro" :@"ロ",
-        @"wa" :@"ワ", @"wo" :@"ヲ", @"n"  :@"ン", @"vu" :@"ヴ",
+        @"wa" :@"ワ", @"wo" :@"ヲ", @"nn  "  :@"ン", @"vu" :@"ヴ",
         @"ga" :@"ガ", @"gi" :@"ギ", @"gu" :@"グ", @"ge" :@"ゲ", @"go" :@"ゴ",
         @"za" :@"ザ", @"ji" :@"ジ", @"zu" :@"ズ", @"ze" :@"ゼ", @"zo" :@"ゾ",
         @"da" :@"ダ", @"di" :@"ヂ", @"du" :@"ヅ", @"de" :@"デ", @"do" :@"ド",
@@ -285,7 +285,7 @@
 {
     romaji = [romaji lowercaseString];
     NSMutableString *convertedStr = [NSMutableString stringWithString:romaji];
-    [self replaceString:convertedStr withRegex:_reRomajiNn template:@"n$1"];     //nnの後に母音またはyが続かない場合は 1 個の n に変換
+    //[self replaceString:convertedStr withRegex:_reRomajiNn template:@"n$1"];     //nnの後に母音またはyが続かない場合は 1 個の n に変換
     [self replaceString:convertedStr withRegex:_reRomajiMba template:@"ン$1$2"]; //m の後ろにバ行、パ行のときは "ン" と変換
     [self replaceString:convertedStr withRegex:_reRomajiXtu template:@"ッ$1"];   //子音が続く時は "ッ" と変換
     //[self replaceString:convertedStr withRegex:_reRomajiA__ template:@"$1ー"];   //母音が続く時は "ー" と変換
