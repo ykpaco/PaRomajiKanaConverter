@@ -109,18 +109,18 @@
         @"va" :@"ヴァ", @"vi" :@"ヴィ", @"ve" :@"ヴェ", @"vo" :@"ヴォ",
 
         @"kwa":@"クァ", @"kwi":@"クィ", @"kwu":@"クゥ", @"kwe":@"クェ", @"kwo":@"クォ",
-        @"kha":@"クァ", @"khi":@"クィ", @"khu":@"クゥ", @"khe":@"クェ", @"kho":@"クォ",
-        @"gwa":@"グァ", @"gwi":@"グィ", @"gwu":@"グゥ", @"gwe":@"グェ", @"gwo":@"グォ",
-        @"gha":@"グァ", @"ghi":@"グィ", @"ghu":@"グゥ", @"ghe":@"グェ", @"gho":@"グォ",
-        @"swa":@"スァ", @"swi":@"スィ", @"swu":@"スゥ", @"swe":@"スェ", @"swo":@"スォ",
-        @"swa":@"スァ", @"swi":@"スィ", @"swu":@"スゥ", @"swe":@"スェ", @"swo":@"スォ",
-        @"zwa":@"ズヮ", @"zwi":@"ズィ", @"zwu":@"ズゥ", @"zwe":@"ズェ", @"zwo":@"ズォ",
-        @"twa":@"トァ", @"twi":@"トィ", @"twu":@"トゥ", @"twe":@"トェ", @"two":@"トォ",
-        @"dwa":@"ドァ", @"dwi":@"ドィ", @"dwu":@"ドゥ", @"dwe":@"ドェ", @"dwo":@"ドォ",
-        @"mwa":@"ムヮ", @"mwi":@"ムィ", @"mwu":@"ムゥ", @"mwe":@"ムェ", @"mwo":@"ムォ",
-        @"bwa":@"ビヮ", @"bwi":@"ビィ", @"bwu":@"ビゥ", @"bwe":@"ビェ", @"bwo":@"ビォ",
-        @"pwa":@"プヮ", @"pwi":@"プィ", @"pwu":@"プゥ", @"pwe":@"プェ", @"pwo":@"プォ",
-        @"phi":@"プィ", @"phu":@"プゥ", @"phe":@"プェ", @"pho":@"フォ",
+        //@"kha":@"クァ", @"khi":@"クィ", @"khu":@"クゥ", @"khe":@"クェ", @"kho":@"クォ",
+        //@"gwa":@"グァ", @"gwi":@"グィ", @"gwu":@"グゥ", @"gwe":@"グェ", @"gwo":@"グォ",
+        @"gwa":@"グヮ", @"gwi":@"グィ", @"gwu":@"グゥ", @"gwe":@"グェ", @"gwo":@"グォ",
+        //@"gha":@"グァ", @"ghi":@"グィ", @"ghu":@"グゥ", @"ghe":@"グェ", @"gho":@"グォ",
+        //@"swa":@"スァ", @"swi":@"スィ", @"swu":@"スゥ", @"swe":@"スェ", @"swo":@"スォ",
+        //@"zwa":@"ズヮ", @"zwi":@"ズィ", @"zwu":@"ズゥ", @"zwe":@"ズェ", @"zwo":@"ズォ",
+        //@"twa":@"トァ", @"twi":@"トィ", @"twu":@"トゥ", @"twe":@"トェ", @"two":@"トォ",
+        //@"dwa":@"ドァ", @"dwi":@"ドィ", @"dwu":@"ドゥ", @"dwe":@"ドェ", @"dwo":@"ドォ",
+        //@"mwa":@"ムヮ", @"mwi":@"ムィ", @"mwu":@"ムゥ", @"mwe":@"ムェ", @"mwo":@"ムォ",
+        //@"bwa":@"ビヮ", @"bwi":@"ビィ", @"bwu":@"ビゥ", @"bwe":@"ビェ", @"bwo":@"ビォ",
+        //@"pwa":@"プヮ", @"pwi":@"プィ", @"pwu":@"プゥ", @"pwe":@"プェ", @"pwo":@"プォ",
+        //@"phi":@"プィ", @"phu":@"プゥ", @"phe":@"プェ", @"pho":@"フォ",
         
         @"-":@"ー"
     };
@@ -289,7 +289,7 @@
     romaji = [romaji lowercaseString];
     NSMutableString *convertedStr = [NSMutableString stringWithString:romaji];
     //[self replaceString:convertedStr withRegex:_reRomajiNn template:@"n$1"];     //nnの後に母音またはyが続かない場合は 1 個の n に変換
-    [self replaceString:convertedStr withRegex:_reRomajiMba template:@"ン$1$2"]; //m の後ろにバ行、パ行のときは "ン" と変換
+    //[self replaceString:convertedStr withRegex:_reRomajiMba template:@"ン$1$2"]; //m の後ろにバ行、パ行のときは "ン" と変換
     [self replaceString:convertedStr withRegex:_reRomajiXtu template:@"ッ$1"];   //子音が続く時は "ッ" と変換
     //[self replaceString:convertedStr withRegex:_reRomajiA__ template:@"$1ー"];   //母音が続く時は "ー" と変換
     return [self replaceString:convertedStr withRegex:_reRomajiToKana replaceMap:_romajiToKanaMap];
@@ -308,7 +308,7 @@
     [self replaceString:romaji withRegex:_reKanaXtu template:@"$1$1"]; //小さい "ッ" は直後の文字を２回に変換
     [self replaceString:romaji withRegex:_reKanaLtu template:@""];     //最後の小さい "ッ" は消去 //"ー"は直前の文字を２回に変換
     [self replaceString:romaji withRegex:_reKanaEr template:@"$1$1"];  //"ー"は直前の文字を２回に変換
-    [self replaceString:romaji withRegex:_reKanaN template:@"m$1$2"];  //n の後ろが バ行、パ行 なら m に修正
+    //[self replaceString:romaji withRegex:_reKanaN template:@"m$1$2"];  //n の後ろが バ行、パ行 なら m に修正
     [self replaceString:romaji withRegex:_reKanaOo template:@"$1"];    //oosaka → osaka
     return romaji;
 }
