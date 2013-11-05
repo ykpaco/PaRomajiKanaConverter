@@ -9,6 +9,7 @@
 
 @interface PaRomajiKanaConverterTest : NSObject
 
++ (void)listAllSpell;
 + (void)test;
 
 @end

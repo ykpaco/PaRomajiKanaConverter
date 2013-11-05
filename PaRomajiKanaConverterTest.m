@@ -7,8 +7,19 @@
 
 #import "PaRomajiKanaConverterTest.h"
 #import "PaRomajiKanaConverter.h"
+#import "UCTypingPhraseManager.h"
 
 @implementation PaRomajiKanaConverterTest
+
++ (void)listAllSpell
+{
+    UCTypingPhraseManager* tmgr = [UCTypingPhraseManager sharedInstance];
+    NSArray* phraseList = [tmgr listAllPhrase];
+    
+    for (UCTypingPhrase* phrase in phraseList) {
+        NSLog(@"%@ -> %@", phrase.kana, phrase.alphabet);
+    }
+}
 
 + (void)test
 {
