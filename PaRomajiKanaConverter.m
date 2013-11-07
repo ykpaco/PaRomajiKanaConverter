@@ -266,6 +266,7 @@
             NSLog(@"kanaN regex error:%@", error);
         }
     }
+    /*
     { //oosaka → osaka
         NSError *error = nil;
         _reKanaOo = [NSRegularExpression regularExpressionWithPattern:@"([aiueo])\\1" options:0 error:&error];
@@ -273,6 +274,7 @@
             NSLog(@"kanaOo regex error:%@", error);
         }
     }
+     */
 
 }
 
