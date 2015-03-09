@@ -35,3 +35,8 @@ NSString *katakana = [hiragana stringHiraganaToKatakana]; // チューリップ
 }
 
 ```
+
+
+## License
+
+PaRomajiKanaConverter is available under the MIT license.
