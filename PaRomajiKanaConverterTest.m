@@ -2,24 +2,13 @@
 //  PaRomajiKanaConverterTest.h
 //
 //  Created by Yusuke Kawakami on 2013/02/28.
-//  Copyright (c) 2013年 Yusuke Kawakami. All rights reserved.
+//  Copyright (c) 2015年 Yusuke Kawakami. All rights reserved.
 //
 
 #import "PaRomajiKanaConverterTest.h"
 #import "PaRomajiKanaConverter.h"
-#import "UCTypingPhraseManager.h"
 
 @implementation PaRomajiKanaConverterTest
-
-+ (void)listAllSpell
-{
-    UCTypingPhraseManager* tmgr = [UCTypingPhraseManager sharedInstance];
-    NSArray* phraseList = [tmgr listAllPhrase];
-    
-    for (UCTypingPhrase* phrase in phraseList) {
-        NSLog(@"%@ -> %@", phrase.kana, phrase.alphabet);
-    }
-}
 
 + (void)test
 {
